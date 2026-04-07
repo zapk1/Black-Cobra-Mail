@@ -87,6 +87,37 @@
 <body>
 <div class="container">
 
+
+
+
+
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <img src="https://media.base44.com/images/public/69aeee89baab381c29ae8d31/bb2a57956_Screenshot_20260406_015157_Gallery.jpg" style="width:72px;height:72px;border-radius:14px;object-fit:cover;border:2px solid #111"/>
+  <h1 style="font-size:1.4rem;font-weight:800;color:#111;letter-spacing:-0.5px">BeelzeMail Ads</h1>
+  <p style="font-size:0.78rem;color:#888;font-weight:500">by Beelze</p>
+  <div style="display:flex;flex-direction:column;gap:10px;width:260px;margin-top:8px">
+    <div style="position:relative">
+      <input id="lockInput" type="password" placeholder="Enter password" maxlength="20"
+        style="width:100%;border:2px solid #ddd;border-radius:8px;padding:10px 40px 10px 12px;font-size:0.9rem;outline:none"
+        onfocus="this.style.borderColor='#111'" onblur="this.style.borderColor='#ddd'"
+        onkeydown="if(event.key==='Enter') unlockApp()"/>
+      <span id="toggleEye" onclick="togglePwd()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999">
+        <i data-lucide="eye-off" style="width:16px;height:16px"></i>
+      </span>
+    </div>
+    <p id="lockError" style="color:#dc2626;font-size:0.78rem;text-align:center;display:none">❌ Wrong password. Try again.</p>
+    <button onclick="unlockApp()" style="background:#111;color:#fff;border:none;border-radius:8px;padding:11px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+      <i data-lucide="lock-open" style="width:15px;height:15px"></i> Unlock
+    </button>
+  </div>
+</div>
+
+
+
+
+
   <!-- Header -->
 <div class="header">
     <img src="https://media.base44.com/images/public/69aeee89baab381c29ae8d31/bb2a57956_Screenshot_20260406_015157_Gallery.jpg" style="width:38px;height:38px;border-radius:8px;object-fit:cover;border:0px solid #FFFFFF"/>
@@ -192,6 +223,38 @@
 <script>
 function initIcons(){ if(typeof lucide !== 'undefined') lucide.createIcons(); }
 initIcons();
+
+
+
+// Lock screen
+initIcons();
+document.getElementById('lockInput').focus();
+
+function unlockApp(){
+  const val = document.getElementById('lockInput').value;
+  if(val === 'VNAXXTTM'){
+    document.getElementById('lockScreen').style.display='none';
+  } else {
+    document.getElementById('lockError').style.display='block';
+    document.getElementById('lockInput').value='';
+    document.getElementById('lockInput').focus();
+  }
+}
+
+function togglePwd(){
+  const inp = document.getElementById('lockInput');
+  const icon = document.getElementById('toggleEye');
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    icon.innerHTML = '<i data-lucide="eye" style="width:16px;height:16px"></i>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<i data-lucide="eye-off" style="width:16px;height:16px"></i>';
+  }
+  initIcons();
+}
+
+
 
 let sendMode = 'bcc';
 let emails = [];
@@ -413,7 +476,7 @@ def main():
         s.login(SENDER_EMAIL, SENDER_PASSWORD)
         print(f"Logged in. Sending to {len(RECIPIENTS)} recipients via {SEND_MODE.upper()}...\\n")
 
-                if SEND_MODE == "bcc":
+        if SEND_MODE == "bcc":
             emails = [r["email"] for r in RECIPIENTS]
             msg = build_msg(RECIPIENTS[0])
             s.sendmail(SENDER_EMAIL, emails, msg.as_string())
