@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BeelzeMail Ads</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:#f8f9fb;min-height:100vh;padding:24px;color:#111}
+  .container{max-width:820px;margin:0 auto}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+  .card h2{font-size:0.8rem;font-weight:700;color:#64748b;margin-bottom:16px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:0.8px}
+  .card h2 i{width:14px;height:14px;color:#6366f1}
+  label{display:block;font-size:0.75rem;font-weight:600;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+  input,select,textarea{width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:10px 13px;font-size:0.88rem;font-family:'Inter',sans-serif;outline:none;transition:border 0.15s,box-shadow 0.15s;background:#fff;color:#0f172a}
+  input:focus,select:focus,textarea:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.1)}
+  textarea{resize:vertical;min-height:100px;line-height:1.6}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{margin-bottom:14px}
+  .email-list{border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;max-height:220px;overflow-y:auto}
+  .email-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #f1f5f9;font-size:0.84rem;color:#334155}
+  .email-item:last-child{border-bottom:none}
+  .email-item button{background:none;border:none;cursor:pointer;color:#cbd5e1;display:flex;align-items:center;padding:2px;border-radius:4px;transition:color 0.1s}
+  .email-item button:hover{color:#ef4444}
+  .email-input-row{display:flex;gap:8px;margin-bottom:8px}
+  .email-input-row input{flex:1;margin:0}
+  .email-input-row button{background:#6366f1;color:#fff;border:none;border-radius:10px;padding:0 16px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s}
+  .email-input-row button:hover{background:#4f46e5}
+  .count-badge{display:inline-flex;align-items:center;gap:4px;background:#ede9fe;color:#6366f1;border-radius:20px;padding:2px 10px;font-size:0.72rem;font-weight:700;margin-left:8px}
+  .mode-btns{display:flex;gap:8px}
+  .mode-btn{flex:1;padding:9px;border:1.5px solid #e5e7eb;border-radius:10px;background:#fff;cursor:pointer;font-size:0.84rem;font-weight:600;color:#94a3b8;transition:all 0.15s}
+  .mode-btn.active{border-color:#6366f1;background:#6366f1;color:#fff;box-shadow:0 2px 8px rgba(99,102,241,0.25)}
+  .domain-row{display:flex;gap:8px;margin-bottom:10px;align-items:flex-end}
+  .domain-row .field{flex:1;margin:0}
+  .domain-row button{background:#6366f1;color:#fff;border:none;border-radius:10px;padding:9px 14px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;height:40px;display:flex;align-items:center;gap:5px;transition:background 0.15s;font-family:'Inter',sans-serif}
+  .domain-row button:hover{background:#4f46e5}
+  .domain-list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .domain-chip{background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 13px;font-size:0.84rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .domain-chip a{color:#6366f1;text-decoration:none;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  .domain-chip a:hover{text-decoration:underline}
+  .domain-chip button{background:none;border:none;cursor:pointer;color:#cbd5e1;display:flex;align-items:center;transition:color 0.1s}
+  .domain-chip button:hover{color:#ef4444}
+  .img-upload-area{border:2px dashed #e5e7eb;border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.15s;background:#fafbff}
+  .img-upload-area:hover{border-color:#6366f1;background:#f5f3ff}
+  .img-upload-area p{color:#94a3b8;font-size:0.85rem}
+  .img-upload-area input{display:none}
+  .img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:12px}
+  .img-card{border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;background:#f8fafc;position:relative}
+  .img-card img{width:100%;height:90px;object-fit:cover;display:block}
+  .img-card .img-info{padding:6px 8px;font-size:0.7rem;color:#94a3b8;word-break:break-all;line-height:1.3}
+  .img-card .rm-btn{position:absolute;top:6px;right:6px;background:#fff;border:1.5px solid #e5e7eb;border-radius:50%;width:24px;height:24px;color:#94a3b8;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.1);transition:all 0.1s}
+  .img-card .rm-btn:hover{background:#fee2e2;border-color:#fca5a5;color:#ef4444}
+  .img-card .rm-btn svg{width:12px;height:12px}
+  .uploading-msg{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#94a3b8;margin-top:8px}
+  .gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:12px;font-size:0.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:opacity 0.15s,transform 0.1s;letter-spacing:0.3px;box-shadow:0 4px 14px rgba(99,102,241,0.35);font-family:'Inter',sans-serif}
+  .gen-btn:hover{opacity:0.92;transform:translateY(-1px)}
+  .code-wrap{background:#0f172a;border:1px solid #1e293b;border-radius:14px;margin-top:18px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12)}
+  .code-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #1e293b;background:#0f172a}
+  .code-header span{color:#94a3b8;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:6px}
+  .copy-btn{background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:0.78rem;font-weight:600;display:flex;align-items:center;gap:6px;transition:all 0.15s;font-family:'Inter',sans-serif}
+  .copy-btn:hover{background:#334155;color:#e2e8f0}
+  .copy-btn.copied{background:#14532d;color:#86efac;border-color:#166534}
+  pre.code-box{color:#e2e8f0;font-family:'Courier New',monospace;font-size:0.77rem;padding:20px;overflow-x:auto;white-space:pre;line-height:1.7;margin:0}
+  .hint{font-size:0.73rem;color:#94a3b8;margin-top:5px}
+  .app-tab{flex:1;padding:12px;border-radius:12px;border:2px solid #e5e7eb;background:#fff;color:#64748b;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;transition:all 0.15s}
+  .app-tab.active{border-color:#6366f1;background:#6366f1;color:#fff;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
+</style>
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="position:fixed;inset:0;background:linear-gradient(135deg,#f0f0ff 0%,#fafaff 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:24px;padding:40px 36px;width:320px;box-shadow:0 20px 60px rgba(99,102,241,0.12);display:flex;flex-direction:column;align-items:center;gap:18px">
+    <div style="position:relative">
+      <img src="https://media.base44.com/images/public/69aeee89baab381c29ae8d31/bb2a57956_Screenshot_20260406_015157_Gallery.jpg" style="width:68px;height:68px;border-radius:18px;object-fit:cover;border:2px solid #ede9fe"/>
+      <div style="position:absolute;bottom:-6px;right:-6px;background:#6366f1;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:2px solid #fff">
+        <i data-lucide="lock" style="width:11px;height:11px;color:#fff"></i>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <h1 style="font-size:1.3rem;font-weight:800;color:#0f172a;letter-spacing:-0.5px">BeelzeMail Ads</h1>
+      <p style="font-size:0.75rem;color:#94a3b8;font-weight:500;margin-top:2px">by Beelze · Secured Access</p>
+    </div>
+    <div style="width:100%;display:flex;flex-direction:column;gap:10px">
+      <div style="position:relative">
+        <input id="lockInput" type="password" placeholder="Enter password" maxlength="20"
+          style="width:100%;border:1.5px solid #e5e7eb;border-radius:11px;padding:11px 42px 11px 14px;font-size:0.88rem;outline:none;font-family:'Inter',sans-serif;color:#0f172a;background:#f8f9fb"
+          onfocus="this.style.borderColor='#6366f1';this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+          onblur="this.style.borderColor='#e5e7eb';this.style.boxShadow='none'"
+          onkeydown="if(event.key==='Enter') unlockApp()"/>
+        <span id="toggleEye" onclick="togglePwd()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#cbd5e1;display:flex">
+          <i data-lucide="eye-off" style="width:16px;height:16px"></i>
+        </span>
+      </div>
+      <p id="lockError" style="color:#ef4444;font-size:0.75rem;text-align:center;display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:6px">❌ Wrong password. Try again.</p>
+      <button onclick="unlockApp()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:11px;padding:12px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(99,102,241,0.35);font-family:'Inter',sans-serif">
+        <i data-lucide="lock-open" style="width:15px;height:15px"></i> Unlock App
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 20px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <img src="https://media.base44.com/images/public/69aeee89baab381c29ae8d31/bb2a57956_Screenshot_20260406_015157_Gallery.jpg" style="width:40px;height:40px;border-radius:12px;object-fit:cover;border:2px solid #ede9fe"/>
+      <div>
+        <h1 style="font-size:1.1rem;font-weight:800;color:#0f172a;letter-spacing:-0.3px">BeelzeMail Ads</h1>
+        <p style="font-size:0.72rem;color:#94a3b8;font-weight:500">Bulk Email Automation · by Beelze</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:5px 12px">
+      <i data-lucide="zap" style="width:12px;height:12px;color:#16a34a"></i>
+      <span style="font-size:0.72rem;font-weight:700;color:#16a34a">Ready</span>
+    </div>
+  </div>
+
+  <!-- MODE TABS -->
+  <div style="display:flex;gap:10px;margin-bottom:18px">
+    <button id="tab1" class="app-tab active" onclick="switchAppMode('single')">
+      <i data-lucide="mail" style="width:15px;height:15px"></i> Mode 1 — Single Account
+    </button>
+    <button id="tab2" class="app-tab" onclick="switchAppMode('multi')">
+      <i data-lucide="users" style="width:15px;height:15px"></i> Mode 2 — Rotating Accounts
+    </button>
+  </div>
+
+  <!-- ===== MODE 1 SECTION ===== -->
+  <div id="mode1Section">
+    <div class="card">
+      <h2><i data-lucide="server"></i> SMTP Configuration</h2>
+      <div class="grid2">
+        <div class="field"><label>Sender Email</label><input id="senderEmail" value="beelzeapps@gmail.com" placeholder="your@email.com"/></div>
+        <div class="field"><label>App Password</label><input id="senderPass" type="password" placeholder="16-char app password"/></div>
+        <div class="field"><label>SMTP Host</label><input id="smtpHost" value="smtp.gmail.com"/></div>
+        <div class="field"><label>SMTP Port</label><input id="smtpPort" value="587" type="number"/></div>
+      </div>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 13px;display:flex;gap:8px;align-items:flex-start">
+        <i data-lucide="info" style="width:14px;height:14px;color:#0284c7;flex-shrink:0;margin-top:1px"></i>
+        <p style="font-size:0.75rem;color:#0369a1;line-height:1.5">Use a <strong>Gmail App Password</strong> — not your regular password.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2><i data-lucide="mail"></i> Email Settings</h2>
+      <div class="field"><label>Subject Line</label><input id="subject" placeholder="e.g. Exclusive offer just for you 🚀"/></div>
+      <div class="field">
+        <label>Send Mode</label>
+        <div class="mode-btns">
+          <button class="mode-btn active" onclick="setMode('bcc',this)"><span style="display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="eye-off" style="width:13px;height:13px"></i> BCC</span></button>
+          <button class="mode-btn" onclick="setMode('cc',this)"><span style="display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="users" style="width:13px;height:13px"></i> CC</span></button>
+          <button class="mode-btn" onclick="setMode('to',this)"><span style="display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="send" style="width:13px;height:13px"></i> TO</span></button>
+        </div>
+      </div>
+      <div class="field"><label>Delay Between Emails (seconds)</label><input id="delay" value="1.5" type="number" step="0.5"/></div>
+      <div class="grid2">
+        <div class="field"><label>Batch Size</label><input id="batchSize" value="20" type="number" min="1"/></div>
+        <div class="field"><label>Delay Between Batches (sec)</label><input id="batchDelay" value="60" type="number" min="10"/></div>
+      </div>
+      <div class="field"><label>Send Times (24h, comma-separated)</label><input id="sendTimes" value="06:00,18:00" placeholder="e.g. 06:00,12:00,18:00"/></div>
+    </div>
+  </div>
+
+  <!-- ===== MODE 2 SECTION ===== -->
+  <div id="mode2Section" style="display:none">
+    <div class="card">
+      <h2><i data-lucide="users-round"></i> Sender Accounts — Rotating</h2>
+      
+      
+            <div class="field">
+        <label>Sender Accounts <span class="count-badge" id="accountCountBadge">0 accounts</span></label>
+        <div class="email-input-row">
+          <input id="accountInput" placeholder="email@gmail.com - apppassword"/>
+          <button onclick="addAccountFromInput()"><i data-lucide="plus" style="width:14px;height:14px"></i> Add</button>
+        </div>
+        <p class="hint" style="display:flex;align-items:center;gap:5px;margin-bottom:10px">
+          <i data-lucide="info" style="width:12px;height:12px;color:#6366f1"></i>
+          Format: email@gmail.com - yourapppassword (one per line or paste multiple)
+        </p>
+        <div class="email-list" id="accountList">
+          <div style="padding:16px;color:#cbd5e1;font-size:0.82rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
+            <i data-lucide="inbox" style="width:22px;height:22px;color:#e2e8f0"></i>
+            No accounts added yet
+          </div>
+        </div>
+      </div>
+      
+      
+      
+      <div class="grid2">
+        <div class="field"><label>SMTP Host (same for all)</label><input id="smtpHostMulti" value="smtp.gmail.com"/></div>
+        <div class="field"><label>SMTP Port (same for all)</label><input id="smtpPortMulti" value="587" type="number"/></div>
+      </div>
+      <div class="field">
+        <label>Emails to send per account</label>
+        <input id="emailsPerAccount" value="100" type="number" min="1" max="500"/>
+        <p class="hint" style="margin-top:5px;display:flex;align-items:center;gap:5px">
+          <i data-lucide="zap" style="width:12px;height:12px;color:#f59e0b"></i>
+          Google limit ~500/day per account. Recommended: 100
+        </p>
+      </div>
+      <div class="field">
+  <label>Send Mode</label>
+  <div class="mode-btns">
+    <button class="mode-btn active" onclick="setModeMulti('bcc',this)"><span style="display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="eye-off" style="width:13px;height:13px"></i> BCC (Recommended)</span></button>
+    <button class="mode-btn" onclick="setModeMulti('individual',this)"><span style="display:flex;align-items:center;justify-content:center;gap:5px"><i data-lucide="send" style="width:13px;height:13px"></i> Individual TO</span></button>
+  </div>
+  <p class="hint" style="margin-top:6px;display:flex;align-items:center;gap:5px;color:#f59e0b">
+    <i data-lucide="alert-triangle" style="width:12px;height:12px;color:#f59e0b"></i>
+    BCC hides all recipients — recommended to avoid spam flags & rejections
+  </p>
+</div>
+      <div class="field"><label>Delay Between Emails (seconds)</label><input id="delayMulti" value="1.5" type="number" step="0.5"/></div>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 13px;display:flex;gap:8px;align-items:flex-start">
+        <i data-lucide="info" style="width:14px;height:14px;color:#0284c7;flex-shrink:0;margin-top:1px"></i>
+        <p style="font-size:0.75rem;color:#0369a1;line-height:1.5">Script logs into <strong>Account 1</strong>, sends X emails, switches to <strong>Account 2</strong>, and so on until all recipients are done.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SHARED SECTIONS (Recipients, Body, Links, Images) ===== -->
+  <div class="card">
+    <h2><i data-lucide="users-round"></i> Recipients <span class="count-badge" id="countBadge">0 emails</span></h2>
+    <div class="email-input-row">
+      <input id="emailInput" placeholder="Paste emails separated by commas, or type one…"/>
+      <button onclick="addEmailsFromInput()"><i data-lucide="plus" style="width:14px;height:14px"></i> Add</button>
+    </div>
+    <p class="hint" style="display:flex;align-items:center;gap:5px;margin-bottom:10px">
+      <i data-lucide="lightbulb" style="width:12px;height:12px;color:#f59e0b"></i>
+      Paste multiple: email1@x.com, email2@x.com — then click Add
+    </p>
+    <div class="email-list" id="emailList">
+      <div style="padding:16px;color:#cbd5e1;font-size:0.82rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
+        <i data-lucide="inbox" style="width:22px;height:22px;color:#e2e8f0"></i>
+        No emails added yet
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><i data-lucide="file-text"></i> Email Body</h2>
+    <div class="field">
+      <label>Message — use {name} for personalisation</label>
+      <textarea id="bodyMsg" rows="6" placeholder="Hello {name},&#10;&#10;Your message here.&#10;&#10;Best,&#10;Beelze Ads"></textarea>
+    </div>
+    <div class="field"><label>Sender Sign-off Name</label><input id="senderName" placeholder="e.g. Beelze Ads"/></div>
+  </div>
+
+  <div class="card">
+    <h2><i data-lucide="link-2"></i> Clickable Links in Email</h2>
+    <div class="domain-row">
+      <div class="field"><label>Label</label><input id="domainText" placeholder="e.g. Visit our store"/></div>
+      <div class="field" style="flex:2"><label>URL</label><input id="domainUrl" placeholder="https://darkmasterstore.co.za"/></div>
+      <button onclick="addDomain()"><i data-lucide="plus" style="width:14px;height:14px"></i> Add</button>
+    </div>
+    <div class="domain-list" id="domainList"></div>
+  </div>
+
+  <div class="card">
+    <h2><i data-lucide="image"></i> Images — ImgBB Upload</h2>
+    <div class="img-upload-area" onclick="document.getElementById('imgInput').click()">
+      <i data-lucide="upload-cloud" style="width:32px;height:32px;color:#a5b4fc;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto"></i>
+      <p style="font-weight:600;color:#6366f1;margin-bottom:2px">Click to upload images</p>
+      <p style="font-size:0.78rem">They'll be hosted on ImgBB automatically</p>
+      <input type="file" id="imgInput" accept="image/*" multiple onchange="uploadImages(this.files)"/>
+    </div>
+    <div style="display:flex;gap:8px;margin:12px 0;align-items:flex-end">
+      <div style="flex:1">
+        <label>Or paste image URL directly</label>
+        <input id="directImgUrl" placeholder="https://i.ibb.co/yourimage.jpg"/>
+      </div>
+      <button onclick="addDirectUrl()" style="background:#6366f1;color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-size:0.82rem;font-weight:600;height:40px;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif">
+        <i data-lucide="link" style="width:13px;height:13px"></i> Add URL
+      </button>
+    </div>
+    <div id="uploadStatus"></div>
+    <div class="img-grid" id="imgGrid"></div>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">
+    <i data-lucide="sparkles"></i> Generate Python Script
+  </button>
+
+  <div id="outputSection" style="display:none">
+    <div class="code-wrap">
+      <div class="code-header">
+        <span><i data-lucide="terminal"></i> Generated Python Script — Ready for Google Colab</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyCode()">
+          <i data-lucide="copy"></i> Copy All
+        </button>
+      </div>
+      <pre class="code-box" id="codeOutput"></pre>
+    </div>
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;margin-top:12px;display:flex;gap:10px;align-items:flex-start">
+      <i data-lucide="check-circle-2" style="width:16px;height:16px;color:#16a34a;flex-shrink:0;margin-top:1px"></i>
+      <div>
+        <p style="font-size:0.8rem;font-weight:700;color:#15803d;margin-bottom:3px">Script ready!</p>
+        <p style="font-size:0.75rem;color:#16a34a;line-height:1.5">Copy the code → open <strong>colab.research.google.com</strong> → New Notebook → paste → ▶ Run</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function initIcons(){ if(typeof lucide !== 'undefined') lucide.createIcons(); }
+initIcons();
+document.getElementById('lockInput').focus();
+
+function unlockApp(){
+  const val = document.getElementById('lockInput').value;
+  if(val === 'VNAXXTTM'){
+    document.getElementById('lockScreen').style.display='none';
+  } else {
+    document.getElementById('lockError').style.display='block';
+    document.getElementById('lockInput').value='';
+    document.getElementById('lockInput').focus();
+  }
+}
+
+function togglePwd(){
+  const inp = document.getElementById('lockInput');
+  const icon = document.getElementById('toggleEye');
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    icon.innerHTML = '<i data-lucide="eye" style="width:16px;height:16px"></i>';
+  } else {
+    inp.type = 'password';
+    icon.innerHTML = '<i data-lucide="eye-off" style="width:16px;height:16px"></i>';
+  }
+  initIcons();
+}
+
+let currentAppMode = 'single';
+
+function switchAppMode(mode){
+  currentAppMode = mode;
+  const t1 = document.getElementById('tab1');
+  const t2 = document.getElementById('tab2');
+  const s1 = document.getElementById('mode1Section');
+  const s2 = document.getElementById('mode2Section');
+  if(mode === 'single'){
+    t1.classList.add('active'); t2.classList.remove('active');
+    s1.style.display='block'; s2.style.display='none';
+  } else {
+    t2.classList.add('active'); t1.classList.remove('active');
+    s1.style.display='none'; s2.style.display='block';
+  }
+  initIcons();
+}
+
+let sendMode = 'bcc';
+let emails = [];
+let domains = [];
+let uploadedImages = [];
+const IMGBB_API_KEY = '7582cc8e40651016b8391c34b4216727';
+
+function setMode(m, btn){
+  sendMode = m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function addEmailsFromInput(){
+  const raw = document.getElementById('emailInput').value;
+  const parts = raw.split(/[\n,]+/).map(e=>e.trim()).filter(e=>e.includes('@'));
+  parts.forEach(e => { if(!emails.includes(e)) emails.push(e); });
+  document.getElementById('emailInput').value = '';
+  renderEmails();
+}
+document.getElementById('emailInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); addEmailsFromInput(); }
+});
+function removeEmail(i){ emails.splice(i,1); renderEmails(); }
+function renderEmails(){
+  const el = document.getElementById('emailList');
+  if(emails.length === 0){
+    el.innerHTML = '<div style="padding:12px;color:#aaa;font-size:0.82rem;text-align:center">No emails added yet</div>';
+  } else {
+    el.innerHTML = emails.map((e,i) => `
+      <div class="email-item">
+        <span>${e}</span>
+        <button onclick="removeEmail(${i})" title="Remove"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+      </div>`).join('');
+  }
+  document.getElementById('countBadge').textContent = emails.length;
+  initIcons();
+}
+
+function addDomain(){
+  const text = document.getElementById('domainText').value.trim();
+  const url  = document.getElementById('domainUrl').value.trim();
+  if(!url) return;
+  domains.push({text: text||url, url});
+  document.getElementById('domainText').value='';
+  document.getElementById('domainUrl').value='';
+  renderDomains();
+}
+function removeDomain(i){ domains.splice(i,1); renderDomains(); }
+function renderDomains(){
+  document.getElementById('domainList').innerHTML = domains.map((d,i) =>
+    `<div class="domain-chip">
+      <a href__="${d.url}" target="_blank">${d.text} — ${d.url}</a>
+      <button onclick="removeDomain(${i})"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+    </div>`
+  ).join('');
+  initIcons();
+}
+
+function addDirectUrl(){
+  const url = document.getElementById('directImgUrl').value.trim();
+  if(!url) return;
+  const idx = uploadedImages.length;
+  uploadedImages.push({name:'direct', url});
+  addImgCard(url, 'direct', idx);
+  document.getElementById('directImgUrl').value='';
+}
+
+async function uploadImages(files){
+  const status = document.getElementById('uploadStatus');
+  for(const file of files){
+    status.innerHTML = `<div class="uploading-msg"><i data-lucide="loader" style="width:14px;height:14px"></i> Uploading ${file.name}...</div>`;
+    initIcons();
+    const form = new FormData();
+    form.append('image', file);
+    try {
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {method:'POST', body:form});
+      const data = await res.json();
+      if(data.success){
+        const url = data.data.url;
+        const idx = uploadedImages.length;
+        uploadedImages.push({name: file.name, url});
+        addImgCard(url, file.name, idx);
+        status.innerHTML = `<div class="uploading-msg" style="color:#16a34a"><i data-lucide="check-circle" style="width:14px;height:14px"></i> ${file.name} uploaded!</div>`;
+      } else {
+        status.innerHTML = `<div class="uploading-msg" style="color:#dc2626"><i data-lucide="x-circle" style="width:14px;height:14px"></i> Upload failed</div>`;
+      }
+    } catch(err) {
+      status.innerHTML = `<div class="uploading-msg" style="color:#dc2626"><i data-lucide="x-circle" style="width:14px;height:14px"></i> Error: ${err.message}</div>`;
+    }
+    initIcons();
+  }
+  document.getElementById('imgInput').value='';
+}
+
+function addImgCard(url, name, idx){
+  const grid = document.getElementById('imgGrid');
+  const div = document.createElement('div');
+  div.className = 'img-card';
+  div.id = 'imgcard_'+idx;
+  div.innerHTML = `
+    <button class="rm-btn" onclick="removeImg(${idx})"><i data-lucide="x"></i></button>
+    <img src="${url}" alt="${name}"/>
+    <div class="img-info">🔗 ${url}</div>`;
+  grid.appendChild(div);
+  initIcons();
+}
+function removeImg(i){
+  uploadedImages[i] = null;
+  const el = document.getElementById('imgcard_'+i);
+  if(el) el.remove();
+}
+
+
+let sendModeMulti = 'bcc';
+function setModeMulti(m, btn){
+  sendModeMulti = m;
+  btn.closest('.mode-btns').querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+let senderAccounts = [];
+
+function addAccountFromInput(){
+  const raw = document.getElementById('accountInput').value;
+  const lines = raw.split(/[\n,]+/).map(l => l.trim()).filter(l => l.length > 0);
+  lines.forEach(line => {
+    const parts = line.split(/\s*-\s*/);
+    if(parts.length >= 2){
+      const email = parts[0].trim();
+      const password = parts.slice(1).join('-').trim();
+      if(email.includes('@') && password.length > 0){
+        if(!senderAccounts.find(a => a.email === email)){
+          senderAccounts.push({email, password});
+        }
+      }
+    }
+  });
+  document.getElementById('accountInput').value = '';
+  renderAccounts();
+}
+document.getElementById('accountInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); addAccountFromInput(); }
+});
+
+function removeAccount(i){ senderAccounts.splice(i,1); renderAccounts(); }
+
+function renderAccounts(){
+  const el = document.getElementById('accountList');
+  if(senderAccounts.length === 0){
+    el.innerHTML = '<div style="padding:16px;color:#cbd5e1;font-size:0.82rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px"><i data-lucide="inbox" style="width:22px;height:22px;color:#e2e8f0"></i>No accounts added yet</div>';
+  } else {
+    el.innerHTML = senderAccounts.map((a, i) => `
+      <div class="email-item">
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-weight:600;color:#0f172a">${a.email}</span>
+          <span style="font-size:0.75rem;color:#94a3b8;letter-spacing:1px">${'•'.repeat(a.password.length)}</span>
+        </div>
+        <button onclick="removeAccount(${i})" title="Remove"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+      </div>`).join('');
+  }
+  document.getElementById('accountCountBadge').textContent = senderAccounts.length + ' accounts';
+  initIcons();
+}
+
+function parseSenderAccounts(){
+  return senderAccounts;
+}
+
+
+
+
+
+
+function generate(){
+  const bodyMsg    = document.getElementById('bodyMsg').value.trim() || 'Hello {name},\n\nYour message here.';
+  const senderName = document.getElementById('senderName').value.trim() || 'Beelze Ads';
+
+  const recipientsCode = emails.map(e => `    {"email": "${e}", "name": "Friend"},`).join('\n');
+
+  const imgHtml = uploadedImages.filter(Boolean).map(img =>
+    `  <img src="${img.url}" alt="image" style="max-width:100%;margin:10px 0;border-radius:8px;"/>`
+  ).join('\n');
+
+  const domainHtml = domains.map(d =>
+    `  <p><a href__="${d.url}" target="_blank" style="color:#0057ff;text-decoration:underline;font-weight:600;">${d.text}</a></p>`
+  ).join('\n');
+
+  const bodyLines = bodyMsg.split('\n').map(l => `  <p>${l}</p>`).join('\n');
+  const htmlBody = `<html><body>\n${bodyLines}\n${imgHtml}\n${domainHtml}\n  <p>Best,<br/>${senderName}</p>\n</body></html>`;
+  const textBody = bodyMsg + `\n\nBest,\n${senderName}`;
+
+  let code = '';
+
+  if(currentAppMode === 'single'){
+    const senderEmail = document.getElementById('senderEmail').value.trim();
+    const senderPass  = document.getElementById('senderPass').value.trim();
+    const smtpHost    = document.getElementById('smtpHost').value.trim();
+    const smtpPort    = document.getElementById('smtpPort').value.trim();
+    const subject     = document.getElementById('subject').value.trim() || 'Hello from Beelze Ads';
+    const delay       = document.getElementById('delay').value.trim() || '1.5';
+    const batchSize   = document.getElementById('batchSize').value.trim() || '20';
+    const batchDelay  = document.getElementById('batchDelay').value.trim() || '60';
+    const sendTimes   = document.getElementById('sendTimes').value.trim() || '06:00';
+    const timesArray  = sendTimes.split(',').map(t => t.trim()).filter(t => t.match(/^\d{1,2}:\d{2}$/));
+    const timesPython = timesArray.map(t => `"${t}"`).join(', ');
+
+    code = `#!/usr/bin/env python3
+"""
+BeelzeMail Ads -- Mode 1: Single Account 24/7 Scheduler
+"""
+import smtplib, ssl, time, os, datetime, zoneinfo
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+
+def now():
+    return datetime.datetime.now(zoneinfo.ZoneInfo("Africa/Johannesburg"))
+
+# -- CONFIG --
+SENDER_EMAIL    = "${senderEmail}"
+SENDER_PASSWORD = "${senderPass}"
+SMTP_HOST       = "${smtpHost}"
+SMTP_PORT       = ${smtpPort}
+SUBJECT         = "${subject}"
+SEND_MODE       = "${sendMode}"
+DELAY           = ${delay}
+BATCH_SIZE      = ${batchSize}
+BATCH_DELAY     = ${batchDelay}
+SEND_TIMES      = [${timesPython}]
+
+BODY_HTML = """${htmlBody}"""
+BODY_TEXT = """${textBody}"""
+ATTACHMENT_PATH = None
+
+RECIPIENTS = [
+${recipientsCode}
+]
+
+def build_msg(recipient):
+    msg = MIMEMultipart("alternative")
+    msg["From"]    = SENDER_EMAIL
+    msg["Subject"] = SUBJECT
+    name = recipient.get("name", "Friend")
+    if SEND_MODE == "bcc":
+        msg["To"] = SENDER_EMAIL
+    else:
+        msg["To"] = recipient["email"]
+    msg.attach(MIMEText(BODY_TEXT.format(name=name), "plain"))
+    msg.attach(MIMEText(BODY_HTML.format(name=name), "html"))
+    return msg
+
+def send_all_emails():
+    ctx = ssl.create_default_context()
+    total = len(RECIPIENTS)
+    sent = 0
+    failed = 0
+    print("")
+    print("=" * 55)
+    print("  SEND SESSION STARTED")
+    print("  Date/Time  : " + now().strftime("%Y-%m-%d %H:%M:%S"))
+    print("  From       : " + SENDER_EMAIL)
+    print("  SMTP       : " + SMTP_HOST + ":" + str(SMTP_PORT))
+    print("  Mode       : " + SEND_MODE.upper())
+    print("  Subject    : " + SUBJECT)
+    print("  Total      : " + str(total) + " recipients")
+    print("=" * 55)
+    batches = [RECIPIENTS[i:i + BATCH_SIZE] for i in range(0, total, BATCH_SIZE)]
+    for batch_num, batch in enumerate(batches, 1):
+        ts = now().strftime("%H:%M:%S")
+        print("--- Batch " + str(batch_num) + "/" + str(len(batches)) + " | " + str(len(batch)) + " emails | started at " + ts + " ---")
+        try:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+                server.starttls(context=ctx)
+                server.login(SENDER_EMAIL, SENDER_PASSWORD)
+                print("  SMTP login OK")
+                if SEND_MODE == "bcc":
+                    batch_emails = [r["email"] for r in batch]
+                    msg = build_msg(batch[0])
+                    server.sendmail(SENDER_EMAIL, batch_emails, msg.as_string())
+                    sent += len(batch_emails)
+                    print("  BCC sent to " + str(len(batch_emails)) + " recipients")
+                else:
+                    for i, r in enumerate(batch, 1):
+                        try:
+                            msg = build_msg(r)
+                            server.sendmail(SENDER_EMAIL, [r["email"]], msg.as_string())
+                            sent += 1
+                            print("  [" + str(sent) + "/" + str(total) + "] SENT -> " + r["email"])
+                        except Exception as e_inner:
+                            failed += 1
+                            print("  [FAILED] -> " + r["email"] + " | " + str(e_inner))
+                        if i < len(batch):
+                            time.sleep(DELAY)
+        except Exception as e:
+            print("  BATCH " + str(batch_num) + " FAILED: " + str(e))
+            time.sleep(30)
+        print("--- Batch " + str(batch_num) + " done | Sent: " + str(sent) + " | Failed: " + str(failed) + " ---")
+        if batch_num < len(batches):
+            time.sleep(BATCH_DELAY)
+    print("=" * 55)
+    print("  SESSION COMPLETE | Sent: " + str(sent) + "/" + str(total) + " | Failed: " + str(failed))
+    print("=" * 55)
+
+def run_forever():
+    print("  BeelzeMail Ads - Mode 1 | Times: " + ", ".join(SEND_TIMES))
+    already_sent_today = set()
+    last_logged_minute = ""
+    while True:
+        n = now()
+        current_time = n.strftime("%H:%M")
+        current_date = n.strftime("%Y-%m-%d")
+        current_ts   = n.strftime("%H:%M:%S")
+        if current_time == "00:00":
+            already_sent_today.clear()
+        if current_time != last_logged_minute:
+            last_logged_minute = current_time
+            print("[" + current_ts + "] Waiting... | Scheduled: " + ", ".join(SEND_TIMES))
+        for send_time in SEND_TIMES:
+            time_key = current_date + "_" + send_time
+            if current_time == send_time and time_key not in already_sent_today:
+                print("[" + current_ts + "] TRIGGER: " + send_time + " matched! Starting send...")
+                already_sent_today.add(time_key)
+                send_all_emails()
+        time.sleep(0.5)
+
+if __name__ == "__main__":
+    run_forever()
+`;
+
+  } else {
+    const accounts      = parseSenderAccounts();
+    const smtpHost      = document.getElementById('smtpHostMulti').value.trim();
+    const smtpPort      = document.getElementById('smtpPortMulti').value.trim();
+    const emailsPerAcc  = document.getElementById('emailsPerAccount').value.trim() || '100';
+    const subject       = document.getElementById('subjectMulti').value.trim() || 'Hello from Beelze Ads';
+    const delay         = document.getElementById('delayMulti').value.trim() || '1.5';
+
+    if(accounts.length === 0){
+      alert('⚠️ No sender accounts found!\n\nMake sure format is:\nemail@gmail.com ( App password - yourpassword )');
+      return;
+    }
+
+    const accountsPython = accounts.map(a =>
+      `    {"email": "${a.email}", "password": "${a.password}"},`
+    ).join('\n');
+
+
+
+
+    const sendModeMultiVal = sendModeMulti;
+
+    code = `#!/usr/bin/env python3
+"""
+BeelzeMail Ads -- Mode 2: Rotating Accounts
+Send Mode: ${sendModeMultiVal.toUpperCase()}
+"""
+import smtplib, ssl, time, datetime, zoneinfo
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def now():
+    return datetime.datetime.now(zoneinfo.ZoneInfo("Africa/Johannesburg"))
+
+SMTP_HOST           = "${smtpHost}"
+SMTP_PORT           = ${smtpPort}
+SUBJECT             = "${subject}"
+EMAILS_PER_ACCOUNT  = ${emailsPerAcc}
+DELAY               = ${delay}
+SEND_MODE           = "${sendModeMultiVal}"
+
+BODY_HTML = """${htmlBody}"""
+BODY_TEXT = """${textBody}"""
+
+ACCOUNTS = [
+${accountsPython}
+]
+
+RECIPIENTS = [
+${recipientsCode}
+]
+
+def build_bcc_msg(sender_email, batch):
+    msg = MIMEMultipart("alternative")
+    msg["From"]    = sender_email
+    msg["To"]      = sender_email
+    msg["Bcc"]     = ", ".join([r["email"] for r in batch])
+    msg["Subject"] = SUBJECT
+    msg.attach(MIMEText(BODY_TEXT.replace("{name}", "Friend"), "plain"))
+    msg.attach(MIMEText(BODY_HTML.replace("{name}", "Friend"), "html"))
+    return msg
+
+def build_individual_msg(sender_email, recipient):
+    msg = MIMEMultipart("alternative")
+    msg["From"]    = sender_email
+    msg["To"]      = recipient["email"]
+    msg["Subject"] = SUBJECT
+    name = recipient.get("name", "Friend")
+    msg.attach(MIMEText(BODY_TEXT.format(name=name), "plain"))
+    msg.attach(MIMEText(BODY_HTML.format(name=name), "html"))
+    return msg
+
+def run_rotating():
+    ctx = ssl.create_default_context()
+    recipients_queue = list(RECIPIENTS)
+    total_recipients = len(recipients_queue)
+    total_sent = 0
+    total_failed = 0
+
+    print("")
+    print("=" * 60)
+    print("  BeelzeMail Ads - Mode 2: Rotating Accounts")
+    print("  Send Mode          : " + SEND_MODE.upper())
+    print("  Start Time         : " + now().strftime("%Y-%m-%d %H:%M:%S"))
+    print("  SMTP               : " + SMTP_HOST + ":" + str(SMTP_PORT))
+    print("  Subject            : " + SUBJECT)
+    print("  Total Recipients   : " + str(total_recipients))
+    print("  Sender Accounts    : " + str(len(ACCOUNTS)))
+    print("  Emails per Account : " + str(EMAILS_PER_ACCOUNT))
+    print("=" * 60)
+
+    for acc_num, account in enumerate(ACCOUNTS, 1):
+        if not recipients_queue:
+            print("  All recipients covered. Done!")
+            break
+
+        batch = recipients_queue[:EMAILS_PER_ACCOUNT]
+        recipients_queue = recipients_queue[EMAILS_PER_ACCOUNT:]
+        acc_email = account["email"]
+        acc_pass  = account["password"]
+
+        print(">>> Account " + str(acc_num) + "/" + str(len(ACCOUNTS)) + ": " + acc_email)
+        print("    Sending to : " + str(len(batch)) + " recipients | Mode: " + SEND_MODE.upper())
+
+        try:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+                server.starttls(context=ctx)
+                server.login(acc_email, acc_pass)
+                print("    Login OK at " + now().strftime("%H:%M:%S"))
+
+                if SEND_MODE == "bcc":
+                    # Split into BCC sub-batches of 50 to stay safe
+                    sub_size = 50
+                    sub_batches = [batch[i:i+sub_size] for i in range(0, len(batch), sub_size)]
+                    for sb_num, sub in enumerate(sub_batches, 1):
+                        try:
+                            msg = build_bcc_msg(acc_email, sub)
+                            all_emails = [acc_email] + [r["email"] for r in sub]
+                            server.sendmail(acc_email, all_emails, msg.as_string())
+                            total_sent += len(sub)
+                            print("    BCC batch " + str(sb_num) + "/" + str(len(sub_batches)) + " -> " + str(len(sub)) + " recipients | Total: " + str(total_sent))
+                        except Exception as e:
+                            total_failed += len(sub)
+                            print("    BCC batch " + str(sb_num) + " FAILED: " + str(e))
+                        if sb_num < len(sub_batches):
+                            time.sleep(DELAY)
+                else:
+                    for i, r in enumerate(batch, 1):
+                        try:
+                            msg = build_individual_msg(acc_email, r)
+                            server.sendmail(acc_email, [r["email"]], msg.as_string())
+                            total_sent += 1
+                            print("    [" + str(i) + "/" + str(len(batch)) + "] SENT -> " + r["email"] + " | Total: " + str(total_sent))
+                        except Exception as e:
+                            total_failed += 1
+                            print("    [FAILED] -> " + r["email"] + " | " + str(e))
+                        if i < len(batch):
+                            time.sleep(DELAY)
+
+                print("    Account " + str(acc_num) + " DONE")
+
+        except Exception as e:
+            print("    LOGIN FAILED: " + str(e))
+
+        if recipients_queue and acc_num < len(ACCOUNTS):
+            print("    Switching account in 5s...")
+            time.sleep(5)
+
+    print("=" * 60)
+    print("  DONE | Sent: " + str(total_sent) + "/" + str(total_recipients) + " | Failed: " + str(total_failed))
+    print("=" * 60)
+
+if __name__ == "__main__":
+    run_rotating()
+`;
+
+}
+
+
+
+  document.getElementById('codeOutput').textContent = code;
+  document.getElementById('outputSection').style.display = 'block';
+  document.getElementById('outputSection').scrollIntoView({behavior:'smooth'});
+  initIcons();
+}
+
+function copyCode(){
+  const code = document.getElementById('codeOutput').textContent;
+  navigator.clipboard.writeText(code);
+  const btn = document.getElementById('copyBtn');
+  btn.classList.add('copied');
+  btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+  initIcons();
+  setTimeout(()=>{
+    btn.classList.remove('copied');
+    btn.innerHTML = '<i data-lucide="copy"></i> Copy All';
+    initIcons();
+  }, 2500);
+}
+</script>
+</body>
+</html>
